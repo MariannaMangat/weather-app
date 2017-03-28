@@ -2,19 +2,44 @@
 <html>
 <head>
   <title>Weather App</title>
+  <!-- Font Awesome -->
+  <script type="text/javascript" src="https://use.fontawesome.com/20df5cf3d4.js"></script>
+  <!-- Google Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,700">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="today">
-    <div id="status"><p></p></div>
-    <h1 id="location">Current Location</h1>
-    <h2 id="currentTemp">Current Temperature</h2>
-    <h3 id="currentConditions">Conditions</h3>
+  <div id="status">
+    <button id="locateBtn"><i class="fa fa-location-arrow" aria-hidden="true"></i></button>
+    <p>San Francisco, CA 96252</p>
+    <button class="close"><i class="fa fa-close"></i></button>
   </div>
-  <div id="future">
-    <div id="day1"></div>
-    <div id="day2"></div>
-    <div id="day3"></div>
+  <div id="current" class="wrapper">
+    <h1 class="location">Aurora, IL 60502</h1>
+    <h2 class="day">Sunday</h2>
+    <p class="conditions">Partly Cloudy</p>
+    <p><span class="temp">72</span> <span class="unit">&deg;F</span></p>
+    <p class="tempRange">High: <span class="hi">75</span> Low: <span class="lo">61</span></p>
+    <p class="conditions">Partly Sunny</p>
+    <p id="observationTime">Last Updated on January 1, 2017</p>
+  </div>
+  <div id="future" class="wrapper">
+<!--    <div class="container">
+      <h3 class="day">Mon</h3>
+      <p class="conditions">Cloudy</p>
+      <p class="tempRange">76/52</p>
+    </div>
+    <div class="container">
+      <h3 class="day">Mon</h3>
+      <p class="conditions">Cloudy</p>
+      <p class="tempRange">76/52</p>
+    </div>
+    <div class="container">
+      <h3 class="day">Mon</h3>
+      <p class="conditions">Cloudy</p>
+      <p class="tempRange">76/52</p>
+    </div> -->
   </div>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script type="text/javascript" src="script.js"></script>

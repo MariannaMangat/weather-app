@@ -1,11 +1,12 @@
 $(document).ready(function () {
   var $status = $('#status p');
-  var $location = $('#location');
-  var $currentTemp = $('#currentTemp');
-  var $currentConditions = $('#currentConditions');
-  var $day1 = $('#day1');
-  var $day2 = $('#day2');
-  var $day3 = $('#day3');
+  var $unitSpan = $('.unit');
+  var $currentLocation = $('#current .location');
+  var $currentDay = $('#current .day');
+  var $currentTemp = $('#current .temp');
+  var $currentConditions = $('#current .conditions');
+  var $observationTime = $('#observationTime');
+  var $futureDiv = $('#future');
 
   // Get current location coordinates
   function getCurrentLocation() {
@@ -22,7 +23,7 @@ $(document).ready(function () {
       $status.show('slow').html('Unable to retrieve your location. Error(' + error.code + '): ' + error.message);
     }
     $status.show('slow').html('Locating…'); // In progress text
-    navigator.geolocation.getCurrentPosition(success, error);
+    navigator.geolocation.getCurrentPosition(success, error, {enableHighAccuracy: true});
   }
 
   // Grab only the needed info from weather request and return
@@ -30,10 +31,17 @@ $(document).ready(function () {
     var newArr = [];
     arr.forEach(function(day) {
       var temp = {}; // Temporary object
-      temp.currentTime = day.date.pretty;
+      temp.weekday = day.date.weekday;
+      temp.weekdayShort = day.date.weekday_short;
       temp.conditions = day.conditions;
-      temp.high = day.high;
-      temp.low = day.low;
+      temp.high = {
+        c: day.high.celsius,
+        f: day.high.fahrenheit
+      };
+      temp.low = {
+        c: day.low.celsius,
+        f: day.low.fahrenheit
+      };
       newArr.push(temp);
     });
     return newArr;
@@ -43,25 +51,50 @@ $(document).ready(function () {
   function getWeather(location) {
     var weatherRequest = $.ajax({
       method: 'GET',
-      url: 'https://api.wunderground.com/api/d6fadca18738e4ec/geolookup/forecast/q/' + location + '.json'
+      url: 'https://api.wunderground.com/api/d6fadca18738e4ec/geolookup/conditions/forecast/q/' + location + '.json'
     });
+    // If successful, store the data I need
     weatherRequest.done(function(data) {
-      var currentLocation = data.location.city + ', ' + data.location.state;
-      var forecastArray = data.forecast.simpleforecast.forecastday;
-      forecastArray = simplifyData(forecastArray);
-      displayWeather(currentLocation, forecastArray);
-      //console.log(forecastArray);
+      var currentLocation = data.current_observation.display_location.city + ', ' + data.current_observation.display_location.state + ' ' + data.current_observation.display_location.zip;
+      var currentConditions = {
+        observationTime: data.current_observation.observation_time,
+        temp: {
+          c: data.current_observation.temp_c,
+          f: data.current_observation.temp_f
+        },
+        weather: data.current_observation.weather
+      };
+      var forecastArray = simplifyData(data.forecast.simpleforecast.forecastday);
+      displayWeather(currentLocation, currentConditions, forecastArray);
     });
+    // If request fails, show error
     weatherRequest.fail(function(xhr, status, error) {
       console.warn(error.message);
     });
   }
 
-  // Print data to page
-  function displayWeather(location, forecast) {
-    $status.hide('slow'); // Hide status bar
-    $location.html(location);
-    console.log(forecast);
+  // Display data on page
+  function displayWeather(location, conditions, forecast) {
+    // Separate today's forecast from the rest
+    var today = forecast.shift();
+    // Print data to page
+    $status.show('slow').html(location + ' (Current location)');
+    $currentLocation.html(location);
+    $currentDay.html(today.weekday);
+    $currentTemp.html(Math.round(conditions.temp.f));
+    $currentConditions.html(conditions.weather);
+    $observationTime.html(conditions.observationTime);
+    // Loop through forecast array & print data
+    forecast.forEach(function(day) {
+      $futureDiv.append(
+        '<div class="container">' +
+        '<h3 class="day">' + day.weekdayShort + '</h3>' +
+        '<p class="conditions">' + day.conditions + '</p>' +
+        '<p class="tempRange"><span class="hi">' + day.high.f +
+        '</span> / <span class="lo">' + day.low.f + '</span></p>' +
+        '</div>'
+      );
+    });
   }
   // Toggle temperature units
 
