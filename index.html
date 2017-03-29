@@ -10,37 +10,51 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Status Bar -->
   <div id="status">
-    <button id="locateBtn"><i class="fa fa-location-arrow" aria-hidden="true"></i></button>
-    <p>San Francisco, CA 96252</p>
-    <button class="close"><i class="fa fa-close"></i></button>
+    <p>Helpful information goes here.</p>
+    <button class="close"><i class="fa fa-times" aria-hidden="true"></i></button>
   </div>
+
+  <!-- Current Weather -->
   <div id="current" class="wrapper">
-    <h1 class="location">Aurora, IL 60502</h1>
+    <button id="locateBtn">
+      <i class="fa fa-location-arrow" aria-hidden="true"></i>
+    </button>
+    <h1 class="location">Aurora, IL</h1>
     <h2 class="day">Sunday</h2>
-    <p class="conditions">Partly Cloudy</p>
-    <p><span class="temp">72</span> <span class="unit">&deg;F</span></p>
-    <p class="tempRange">High: <span class="hi">75</span> Low: <span class="lo">61</span></p>
-    <p class="conditions">Partly Sunny</p>
-    <p id="observationTime">Last Updated on January 1, 2017</p>
+    <p class="conditions">Sunny</p>
+    <p class="tempRange">
+      <span class="hi">75</span> |
+      <span class="lo">61</span>
+    </p>
+    <div id="largeNum">
+      <p><span class="temp">72</span><span class="unit">&deg;F</span></p>
+    </div>
   </div>
+
+  <!-- Future Forecast -->
   <div id="future" class="wrapper">
-<!--    <div class="container">
-      <h3 class="day">Mon</h3>
-      <p class="conditions">Cloudy</p>
-      <p class="tempRange">76/52</p>
-    </div>
     <div class="container">
       <h3 class="day">Mon</h3>
-      <p class="conditions">Cloudy</p>
-      <p class="tempRange">76/52</p>
+      <p class="conditions">Partly Cloudy</p>
+      <p class="tempRange"><span class="hi">76</span> / <span class="lo">52</span></p>
     </div>
     <div class="container">
-      <h3 class="day">Mon</h3>
-      <p class="conditions">Cloudy</p>
-      <p class="tempRange">76/52</p>
-    </div> -->
+      <h3 class="day">Tue</h3>
+      <p class="conditions">Overcast</p>
+      <p class="tempRange"><span class="hi">76</span> / <span class="lo">52</span></p>
+    </div>
+    <div class="container">
+      <h3 class="day">Wed</h3>
+      <p class="conditions">Rainy</p>
+      <p class="tempRange"><span class="hi">76</span> / <span class="lo">52</span></p>
+    </div>
   </div>
+
+  <footer>
+    <p id="observationTime">Last Updated on January 1, 2017</p>
+  </footer>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script type="text/javascript" src="script.js"></script>
 </body>
