@@ -1,28 +1,29 @@
 $(document).ready(function () {
-  var $status = $('#status p');
+  var $statusText = $('#status p');
   var $unitSpan = $('.unit');
   var $currentLocation = $('#current .location');
   var $currentDay = $('#current .day');
   var $currentTemp = $('#current .temp');
   var $currentConditions = $('#current .conditions');
-  var $observationTime = $('#observationTime');
   var $futureDiv = $('#future');
+  var $observationTime = $('#observationTime');
 
   // Get current location coordinates
   function getCurrentLocation() {
     // If geolocation is not supported, output msg and exit out of function
     if (!navigator.geolocation){
-      $status.show('slow').html('Geolocation is not supported by your browser');
+      $statusText.html('Geolocation is not supported by your browser').parent().slideDown('fast');
       return;
     }
     function success(position) {
       var location  = position.coords.latitude + ',' + position.coords.longitude;
       getWeather(location); // Get weather after getting position
+      $statusText.html('Success! Location found.').parent().slideDown('fast');
     }
     function error(error) {
-      $status.show('slow').html('Unable to retrieve your location. Error(' + error.code + '): ' + error.message);
+      $statusText.html('Unable to retrieve your location. Error(' + error.code + '): ' + error.message).parent().slideDown('fast');
     }
-    $status.show('slow').html('Locating…'); // In progress text
+    $statusText.html('Locating…').parent().slideDown('fast'); // In progress text
     navigator.geolocation.getCurrentPosition(success, error, {enableHighAccuracy: true});
   }
 
@@ -55,7 +56,7 @@ $(document).ready(function () {
     });
     // If successful, store the data I need
     weatherRequest.done(function(data) {
-      var currentLocation = data.current_observation.display_location.city + ', ' + data.current_observation.display_location.state + ' ' + data.current_observation.display_location.zip;
+      var currentLocation = data.current_observation.display_location.city + ', ' + data.current_observation.display_location.state;
       var currentConditions = {
         observationTime: data.current_observation.observation_time,
         temp: {
@@ -78,7 +79,6 @@ $(document).ready(function () {
     // Separate today's forecast from the rest
     var today = forecast.shift();
     // Print data to page
-    $status.show('slow').html(location + ' (Current location)');
     $currentLocation.html(location);
     $currentDay.html(today.weekday);
     $currentTemp.html(Math.round(conditions.temp.f));
@@ -96,6 +96,12 @@ $(document).ready(function () {
       );
     });
   }
+
+  // Status bar close button
+  $('.close').on('click', function() {
+    $(this).parent().slideUp('fast'); // Slide up animation
+  });
+
   // Toggle temperature units
 
   // Get current location on load
