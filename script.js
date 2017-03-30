@@ -1,6 +1,8 @@
 $(document).ready(function () {
-  var $statusText = $('#status p');
+  var $statusBar = $('#status');
+  var $statusText = $statusBar.children('p');
   var $unitSpan = $('.unit');
+  var $locateBtn = $('#locateBtn');
   var $currentLocation = $('#current .location');
   var $currentDay = $('#current .day');
   var $currentTemp = $('#current .temp');
@@ -8,45 +10,43 @@ $(document).ready(function () {
   var $futureDiv = $('#future');
   var $observationTime = $('#observationTime');
 
-  // Get current location coordinates
+  // -----------------
+  // Geolocation API
+  // -----------------
   function getCurrentLocation() {
     // If geolocation is not supported, output msg and exit out of function
     if (!navigator.geolocation){
-      $statusText.html('Geolocation is not supported by your browser').parent().slideDown('fast');
+      showStatus('error', 'Geolocation is not supported by this browser');
       return;
     }
-    function success(position) {
+    function showPosition(position) {
       var location  = position.coords.latitude + ',' + position.coords.longitude;
       getWeather(location); // Get weather after getting position
-      $statusText.html('Success! Location found.').parent().slideDown('fast');
+      showStatus('success', 'Success! Location found.');
     }
-    function error(error) {
-      $statusText.html('Unable to retrieve your location. Error(' + error.code + '): ' + error.message).parent().slideDown('fast');
+    function showError(error) {
+      switch(error.code) {
+        case error.PERMISSION_DENIED:
+          showStatus('error', 'Geolocation request denied. Try visiting the HTTPS site: <a href="https://codepen.io/tiffanyadu/pen/qryXBo" target="_blank">https://codepen.io/tiffanyadu/pen/qryXBo</a>');
+          break;
+        case error.POSITION_UNAVAILABLE:
+          showStatus('error', 'Location information is unavailable.');
+          break;
+        case error.TIMEOUT:
+          showStatus('error', 'The request to get user location timed out.');
+          break;
+        case error.UNKNOWN_ERROR:
+          showStatus('error', 'An unknown error occurred.');
+          break;
+      }
     }
-    $statusText.html('Locating…').parent().slideDown('fast'); // In progress text
-    navigator.geolocation.getCurrentPosition(success, error, {enableHighAccuracy: true});
+    showStatus('', 'Locating…'); // In progress text
+    navigator.geolocation.getCurrentPosition(showPosition, showError, {enableHighAccuracy: true});
   }
 
-  // Grab only the needed info from weather request and return
-  function simplifyData(arr) {
-    var newArr = [];
-    arr.forEach(function(day) {
-      var temp = {}; // Temporary object
-      temp.weekday = day.date.weekday;
-      temp.weekdayShort = day.date.weekday_short;
-      temp.conditions = day.conditions;
-      temp.high = {
-        c: day.high.celsius,
-        f: day.high.fahrenheit
-      };
-      temp.low = {
-        c: day.low.celsius,
-        f: day.low.fahrenheit
-      };
-      newArr.push(temp);
-    });
-    return newArr;
-  }
+  // ---------------
+  // Weather API
+  // ---------------
 
   // Send request to API to get weather data
   function getWeather(location) {
@@ -78,12 +78,15 @@ $(document).ready(function () {
   function displayWeather(location, conditions, forecast) {
     // Separate today's forecast from the rest
     var today = forecast.shift();
+    var time = getCurrentTime();
     // Print data to page
     $currentLocation.html(location);
-    $currentDay.html(today.weekday);
+    $currentDay.html(today.weekday + ' ' + time);
     $currentTemp.html(Math.round(conditions.temp.f));
     $currentConditions.html(conditions.weather);
     $observationTime.html(conditions.observationTime);
+    // Empty Future div to prevent duplicates
+    $futureDiv.empty();
     // Loop through forecast array & print data
     forecast.forEach(function(day) {
       $futureDiv.append(
@@ -97,14 +100,83 @@ $(document).ready(function () {
     });
   }
 
-  // Status bar close button
-  $('.close').on('click', function() {
-    $(this).parent().slideUp('fast'); // Slide up animation
-  });
-
   // Toggle temperature units
 
-  // Get current location on load
-  getCurrentLocation();
+  // Animate locateBtn on load
+
+  // Click locateBtn to get current location
+  $locateBtn.on('click', function() {
+    getCurrentLocation();
+  });
+
+  // getCurrentLocation();
+
+  // ------------
+  // Status Bar
+  // ------------
+  function showStatus(type, message) {
+    var errorIcon = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>';
+    var successIcon = '<i class="fa fa-check-circle" aria-hidden="true"></i>';
+    // Remove all classes from status bar
+    $statusBar.removeClass();
+    // Check the type of message, add appropriate classes, and insert info
+    if (type === 'error') {
+      $statusText.html(errorIcon + '<strong>Error:</strong> ' + message);
+      $statusBar.addClass('error');
+    } else if (type === 'success') {
+      $statusText.html(successIcon + message);
+      $statusBar.addClass('success');
+    } else {
+      $statusText.html(message);
+    }
+    // Animate open
+    $statusBar.slideDown('fast');
+  }
+  // Status bar animate close
+  $statusBar.children('.close').on('click', function() {
+    $statusBar.slideUp('fast'); // Slide up animation
+  });
+
+  // ---------------
+  // Misc Functions
+  // ---------------
+
+  // Grab only the needed info from weather request and return
+  function simplifyData(arr) {
+    var newArr = [];
+    arr.forEach(function(day) {
+      var temp = {}; // Temporary object
+      temp.weekday = day.date.weekday;
+      temp.weekdayShort = day.date.weekday_short;
+      temp.conditions = day.conditions;
+      temp.high = {
+        c: day.high.celsius,
+        f: day.high.fahrenheit
+      };
+      temp.low = {
+        c: day.low.celsius,
+        f: day.low.fahrenheit
+      };
+      newArr.push(temp);
+    });
+    return newArr;
+  }
+
+  // Get and format current time
+  function getCurrentTime() {
+    var now = new Date();
+    var hours = now.getHours();
+    var mins = now.getMinutes();
+    var period = 'am';
+    if (hours > 12) {
+      hours -= 12;
+      period = 'pm';
+    }
+    if (mins < 10) {
+      mins = '0' + mins;
+    }
+    return hours + ':' + mins + ' ' + period;
+  }
+
 
 });
