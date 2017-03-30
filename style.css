@@ -6,6 +6,10 @@
   margin: 0;
   padding: 0;
 }
+/* Remove outline > Apply other styles for accessibility */
+:focus {
+  outline: none;
+}
 html, body {
   height: 100%;
   width: 100%;
@@ -15,22 +19,28 @@ body {
   color: #fff;
   font-family: 'Lato', sans-serif;
   font-size: 110%;
-  padding: 50px;
+  padding: 10%;
   position: relative;
   letter-spacing: 0.05rem;
   line-height: 1.5;
   text-align: center;
+}
+a {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
 }
 footer {
 /*  background: #fff; */
   bottom: 0;
   color: #000;
   font-size: 0.8rem;
-  height: 40px;
+  height: 80px;
   left: 0;
-  line-height: 40px;
-  opacity: 0.4;
-  position: absolute;
+  line-height: 80px;
+  opacity: 0.3;
+  position: relative;
   right: 0;
   width: 100%;
 }
@@ -48,39 +58,61 @@ footer {
   Status Bar
 -----------------*/
 #status {
-  background: #FFECAE;
-  color: #142E54;
+  background-color: #FFECAE;
+  color: #444A4C;
   display: none;
   font-size: 1rem;
-  height: 40px;
   left: 0;
-  position: absolute;
+  position: fixed;
   right: 0;
   top: 0;
   width: 100%;
+  z-index: 100;
 }
 #status p {
-  line-height: 40px;
+  display: inline-block;
+  padding: 8px 40px;
+}
+#status a {
+  color: #fff;
 }
 #status .close {
   background: none;
   border: none;
-  color: #142E54;
+  color: #444A4C;
   cursor: pointer;
+  float: right;
   height: 40px;
   position: absolute;
   right: 0;
   top: 0;
   width: 40px;
 }
+/*** Error & Success Messages ***/
+#status.error {
+  background-color: #EE9797;
+}
+#status.success {
+  background-color: #82C886;
+}
+#status.error, #status.error .close,
+#status.success, #status.success .close {
+  color: #fff;
+}
+#status.error .fa-exclamation-triangle,
+#status.success .fa-check-circle {
+  margin-right: 10px;
+}
+
+
 
 /*----------------
   Current Weather
 -----------------*/
 #current {
-  border: 1px solid #ccc;
+/*  border: 1px solid #ccc; */
 /*  height: 100%; */
-  padding: 5%;
+  padding: 0 5% 5%;
   position: relative;
 }
 #locateBtn {
@@ -130,7 +162,9 @@ footer {
   Future Forecast
 -----------------*/
 #future {
+/*  background: #ccc; */
   font-size: 0.9rem;
+  padding: 20px 0;
 }
 #future > .container {
 /*  background: tomato; */
