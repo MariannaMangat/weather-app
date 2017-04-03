@@ -4,7 +4,7 @@
   from the Wunderground API
 ----------------------------------------------*/
 * { box-sizing: border-box; }
-html { background: #86C6F2; }
+html { background: #C4E5FF; }
 .container {
   margin: 12% auto;
   text-align: center;
@@ -44,7 +44,7 @@ html { background: #86C6F2; }
   margin-top: 48.5%;
 }
 .clear, .clear:before, .clear > .inner:before, .clear > .inner:after, .sunny, .sunny:before, .sunny > .inner:before, .sunny > .inner:after {
-  background: #FFD632;
+  background: #FFCC00;
   left: 0;
   top: 48.5%;
   width: 100%;
@@ -60,7 +60,7 @@ html { background: #86C6F2; }
   transform: rotate(135deg);
 }
 .clear:after, .sunny:after {
-  background: #FFD632;
+  background: #FFCC00;
   border-radius: 50%;
   height: 60%;
   left: 20%;
@@ -70,22 +70,22 @@ html { background: #86C6F2; }
 
 /*** Partly Cloudy/Mostly Sunny ***/
 .mostlysunny, .partlycloudy {
-  background: #FFD632;
+  background: #FFCC00;
   height: 80%;
   margin-left: 48.5%;
   top: 0;
   width: 0.2em;
 }
 .mostlysunny:before, .partlycloudy:before {
-  background: #FFD632;
+  background: #FFCC00;
   left: 0;
   top: 48.5%;
   width: 100%;
   height: 0.2em;
 }
 .mostlysunny > .inner:before, .partlycloudy > .inner:before {
-  border-bottom: 0.2em solid #FFD632;
-  border-left: 0.2em solid #FFD632;
+  border-bottom: 0.2em solid #FFCC00;
+  border-left: 0.2em solid #FFCC00;
   height: 80%;
   left: 8%;
   top: -48.5%;
@@ -93,7 +93,7 @@ html { background: #86C6F2; }
   width: 80%;
 }
 .mostlysunny > .inner, .partlycloudy > .inner {
-  background: #FFD632;
+  background: #FFCC00;
   border-radius: 50%;
   height: 60%;
   left: 20%;
@@ -120,22 +120,22 @@ html { background: #86C6F2; }
 /*** Mostly Cloudy/Partly Sunny ***/
 .mostlycloudy,
 .partlysunny {
-  background: #FFD632;
+  background: #FFCC00;
   height: 80%;
   margin-left: 48.5%;
   top: 0;
   width: 0.2em;
 }
 .mostlycloudy:before, .partlysunny:before {
-  background: #FFD632;
+  background: #FFCC00;
   left: 0;
   top: 48.5%;
   width: 100%;
   height: 0.2em;
 }
 .mostlycloudy > .inner:before, .partlysunny > .inner:before {
-  border-bottom: 0.2em solid #FFD632;
-  border-left: 0.2em solid #FFD632;
+  border-bottom: 0.2em solid #FFCC00;
+  border-left: 0.2em solid #FFCC00;
   height: 80%;
   left: 8%;
   top: -48.5%;
@@ -143,7 +143,7 @@ html { background: #86C6F2; }
   width: 80%;
 }
 .mostlycloudy > .inner, .partlysunny > .inner {
-  background: #FFD632;
+  background: #FFCC00;
   border-radius: 50%;
   height: 60%;
   left: 20%;
@@ -261,7 +261,7 @@ html { background: #86C6F2; }
 
 /*** Chance T-Storms / T-Storms ***/
 .chancetstorms:before, .tstorms:before {
-  background: #FFD632;
+  background: #FFCC00;
   height: 30%;
   left: 43%;
   top: 50%;
@@ -270,7 +270,7 @@ html { background: #86C6F2; }
 }
 .chancetstorms > .inner:before, .tstorms > .inner:before {
   border-right: 0.7em solid transparent;
-  border-top: 1.9em solid #FFD632;
+  border-top: 1.9em solid #FFCC00;
   bottom: 0;
   left: 45%;
   transform: skew(-20deg);
@@ -312,7 +312,7 @@ html { background: #86C6F2; }
   width: 40%;
 }
 .chancesleet > .inner:after, .chancesleet:after, .sleet > .inner:after, .sleet:after {
-  background: #D6E0E7;
+  background: #B1C7D8;
   border-radius: 50%;
 }
 .chancesleet > .inner:after, .sleet > .inner:after {
@@ -343,7 +343,7 @@ html { background: #86C6F2; }
 }
 .chanceflurries:before, .chanceflurries:after,
 .flurries:before, .flurries:after {
-  background: #D6E0E7;
+  background: #B1C7D8;
   border-radius: 50%;
 }
 .chanceflurries:before, .flurries:before {
@@ -374,7 +374,7 @@ html { background: #86C6F2; }
 }
 .chancesnow:before, .chancesnow:after,
 .snow:before, .snow:after {
-  background: #D6E0E7;
+  background: #B1C7D8;
   border-radius: 50%;
 }
 .chancesnow:before, .snow:before {
