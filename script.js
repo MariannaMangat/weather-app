@@ -1,14 +1,4 @@
 $(document).ready(function () {
-  var $statusBar = $('#status');
-  var $statusText = $statusBar.children('p');
-  var $unitSpan = $('.unit');
-  var $locateBtn = $('#locateBtn');
-  var $currentLocation = $('#current .location');
-  var $currentDay = $('#current .day');
-  var $currentTemp = $('#current .temp');
-  var $currentConditions = $('#current .conditions');
-  var $futureDiv = $('#future');
-  var $observationTime = $('#observationTime');
 
   // -----------------
   // Geolocation API
@@ -16,7 +6,7 @@ $(document).ready(function () {
   function getCurrentLocation() {
     // If geolocation is not supported, output msg and exit out of function
     if (!navigator.geolocation){
-      showStatus('error', 'Geolocation is not supported by this browser');
+      showStatus('error', 'ERROR: Geolocation is not supported by this browser');
       return;
     }
     function showPosition(position) {
@@ -27,16 +17,16 @@ $(document).ready(function () {
     function showError(error) {
       switch(error.code) {
         case error.PERMISSION_DENIED:
-          showStatus('error', 'Geolocation request denied. Try visiting the HTTPS site: <a href="https://codepen.io/tiffanyadu/pen/qryXBo" target="_blank">https://codepen.io/tiffanyadu/pen/qryXBo</a>');
+          showStatus('error', 'ERROR: Geolocation request denied. Try visiting the HTTPS site: <a href="https://codepen.io/tiffanyadu/pen/qryXBo" target="_blank">https://codepen.io/tiffanyadu/pen/qryXBo</a>');
           break;
         case error.POSITION_UNAVAILABLE:
-          showStatus('error', 'Location information is unavailable.');
+          showStatus('error', 'ERROR: Location information is unavailable.');
           break;
         case error.TIMEOUT:
-          showStatus('error', 'The request to get user location timed out.');
+          showStatus('error', 'ERROR: The request to get user location timed out.');
           break;
         case error.UNKNOWN_ERROR:
-          showStatus('error', 'An unknown error occurred.');
+          showStatus('error', 'ERROR: An unknown error occurred.');
           break;
       }
     }
@@ -62,8 +52,8 @@ $(document).ready(function () {
         temp: {
           c: data.current_observation.temp_c,
           f: data.current_observation.temp_f
-        },
-        weather: data.current_observation.weather
+        }
+        // weather: data.current_observation.weather
       };
       var forecastArray = simplifyData(data.forecast.simpleforecast.forecastday);
       displayWeather(currentLocation, currentConditions, forecastArray);
@@ -78,29 +68,37 @@ $(document).ready(function () {
   function displayWeather(location, conditions, forecast) {
     // Separate today's forecast from the rest
     var today = forecast.shift();
-    var time = getCurrentTime();
-    // Print data to page
-    $currentLocation.html(location);
-    $currentDay.html(today.weekday + ' ' + time);
-    $currentTemp.html(Math.round(conditions.temp.f));
-    $currentConditions.html(conditions.weather);
-    $observationTime.html(conditions.observationTime);
-    // Empty Future div to prevent duplicates
+    var $futureDiv = $('#future');
+    // Today - Print weather data
+    $('#current .location').html(location);
+    $('#current .date').html(today.date);
+    $('#current .time').html(getCurrentTime());
+    $('#current .weatherIcon > div').attr('class', today.icon);
+    $('#current .conditions').html(today.conditions);
+    $('#current .temp').html(Math.round(conditions.temp.f));
+    $('#current .tempRange .high').html(today.high.f);
+    $('#current .tempRange .low').html(today.low.f);
+    $('#observationTime').html(conditions.observationTime);
+    // Future - Empty div to prevent duplicates
     $futureDiv.empty();
-    // Loop through forecast array & print data
+    // Loop through forecast array & print data for future forecasts
     forecast.forEach(function(day) {
       $futureDiv.append(
         '<div class="container">' +
         '<h3 class="day">' + day.weekdayShort + '</h3>' +
+        '<div class="weatherIcon"><div class="' + day.icon + '"><div class="inner"></div></div></div>' +
         '<p class="conditions">' + day.conditions + '</p>' +
-        '<p class="tempRange"><span class="hi">' + day.high.f +
-        '</span> / <span class="lo">' + day.low.f + '</span></p>' +
+        '<p class="tempRange"><span class="high">' + day.high.f + '</span> | <span class="low">' + day.low.f + '</span></p>' +
         '</div>'
       );
     });
   }
 
-  // Toggle temperature units
+  // ------------------------
+  // Locate and Unit Buttons
+  // ------------------------
+  var $locateBtn = $('#locateBtn');
+  var $unitBtn = $('.unitBtn');
 
   // Animate locateBtn on load
 
@@ -109,30 +107,29 @@ $(document).ready(function () {
     getCurrentLocation();
   });
 
-  // getCurrentLocation();
+  // Toggle temperature units
+  // Default to Fahrenheits
+
 
   // ------------
   // Status Bar
   // ------------
-  function showStatus(type, message) {
-    var errorIcon = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>';
-    var successIcon = '<i class="fa fa-check-circle" aria-hidden="true"></i>';
-    // Remove all classes from status bar
-    $statusBar.removeClass();
-    // Check the type of message, add appropriate classes, and insert info
-    if (type === 'error') {
-      $statusText.html(errorIcon + '<strong>Error:</strong> ' + message);
-      $statusBar.addClass('error');
-    } else if (type === 'success') {
-      $statusText.html(successIcon + message);
-      $statusBar.addClass('success');
-    } else {
-      $statusText.html(message);
+  var $statusBar = $('#status');
+
+  function showStatus(statusType, message) {
+    var $statusText = $statusBar.children('p');
+    var icon = '';
+    // Set icon based on statusType
+    if (statusType === 'error') {
+      icon = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>';
+    } else if (statusType === 'success') {
+      icon = '<i class="fa fa-check-circle" aria-hidden="true"></i>';
     }
-    // Animate open
-    $statusBar.slideDown('fast');
+    // Set status class, icon, text, and open animation
+    $statusText.html(icon + message);
+    $statusBar.attr('class', statusType).slideDown('fast');
   }
-  // Status bar animate close
+  // Status bar close animation
   $statusBar.children('.close').on('click', function() {
     $statusBar.slideUp('fast'); // Slide up animation
   });
@@ -145,19 +142,20 @@ $(document).ready(function () {
   function simplifyData(arr) {
     var newArr = [];
     arr.forEach(function(day) {
-      var temp = {}; // Temporary object
-      temp.weekday = day.date.weekday;
-      temp.weekdayShort = day.date.weekday_short;
-      temp.conditions = day.conditions;
-      temp.high = {
+      var forecast = {}; // Temporary object
+      forecast.date = day.date.weekday + ', ' + day.date.monthname + ' ' + day.date.day;
+      forecast.weekdayShort = day.date.weekday_short;
+      forecast.conditions = day.conditions;
+      forecast.icon = day.icon;
+      forecast.high = {
         c: day.high.celsius,
         f: day.high.fahrenheit
       };
-      temp.low = {
+      forecast.low = {
         c: day.low.celsius,
         f: day.low.fahrenheit
       };
-      newArr.push(temp);
+      newArr.push(forecast);
     });
     return newArr;
   }
@@ -168,15 +166,19 @@ $(document).ready(function () {
     var hours = now.getHours();
     var mins = now.getMinutes();
     var period = 'am';
-    if (hours > 12) {
-      hours -= 12;
+    if (hours > 11) {
       period = 'pm';
+      if (hours > 12) hours -= 12; // Format for 12-hr clock
     }
     if (mins < 10) {
-      mins = '0' + mins;
+      mins = '0' + mins; // Format minutes
     }
     return hours + ':' + mins + ' ' + period;
   }
 
+  // -----------------------------------
+  // Default to Chicago weather on load
+  // -----------------------------------
+  // getCurrentLocation();
 
 });
