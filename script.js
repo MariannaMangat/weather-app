@@ -1,5 +1,12 @@
 $(document).ready(function () {
-
+  var currentDate,
+      currentLocation = 60647, // Default to Chicago
+      currentTemp = [],
+      currentUnits = 'f', // Default to Fahrenheit
+      forecast = [],
+      $forecastDivs = $('#future .container'),
+      $locateBtn = $('#locateBtn'),
+      $unitBtn = $('#unitBtn');
   // -----------------
   // Geolocation API
   // -----------------
@@ -13,6 +20,7 @@ $(document).ready(function () {
       var location  = position.coords.latitude + ',' + position.coords.longitude;
       getWeather(location); // Get weather after getting position
       showStatus('success', 'Success! Location found.');
+      $locateBtn.addClass('on'); // Toggle btn class to on if successful
     }
     function showError(error) {
       switch(error.code) {
@@ -44,19 +52,9 @@ $(document).ready(function () {
       method: 'GET',
       url: 'https://api.wunderground.com/api/d6fadca18738e4ec/geolookup/conditions/forecast/q/' + location + '.json'
     });
-    // If successful, store the data I need
+    // If getting was successful, send data to be processed
     weatherRequest.done(function(data) {
-      var currentLocation = data.current_observation.display_location.city + ', ' + data.current_observation.display_location.state;
-      var currentConditions = {
-        observationTime: data.current_observation.observation_time,
-        temp: {
-          c: data.current_observation.temp_c,
-          f: data.current_observation.temp_f
-        }
-        // weather: data.current_observation.weather
-      };
-      var forecastArray = simplifyData(data.forecast.simpleforecast.forecastday);
-      displayWeather(currentLocation, currentConditions, forecastArray);
+      processData(data);
     });
     // If request fails, show error
     weatherRequest.fail(function(xhr, status, error) {
@@ -64,52 +62,65 @@ $(document).ready(function () {
     });
   }
 
-  // Display data on page
-  function displayWeather(location, conditions, forecast) {
-    // Separate today's forecast from the rest
-    var today = forecast.shift();
-    var $futureDiv = $('#future');
-    // Today - Print weather data
-    $('#current .location').html(location);
-    $('#current .date').html(today.date);
-    $('#current .time').html(getCurrentTime());
-    $('#current .weatherIcon > div').attr('class', today.icon);
-    $('#current .conditions').html(today.conditions);
-    $('#current .temp').html(Math.round(conditions.temp.f));
-    $('#current .tempRange .high').html(today.high.f);
-    $('#current .tempRange .low').html(today.low.f);
-    $('#observationTime').html(conditions.observationTime);
-    // Future - Empty div to prevent duplicates
-    $futureDiv.empty();
-    // Loop through forecast array & print data for future forecasts
-    forecast.forEach(function(day) {
-      $futureDiv.append(
-        '<div class="container">' +
-        '<h3 class="day">' + day.weekdayShort + '</h3>' +
-        '<div class="weatherIcon"><div class="' + day.icon + '"><div class="inner"></div></div></div>' +
-        '<p class="conditions">' + day.conditions + '</p>' +
-        '<p class="tempRange"><span class="high">' + day.high.f + '</span> | <span class="low">' + day.low.f + '</span></p>' +
-        '</div>'
-      );
+  // Grab only the needed info from weather request and return
+  function processData(data) {
+    var current = data.current_observation;
+    var daily = data.forecast.simpleforecast.forecastday;
+    // Store values for current date, location, and temp
+    currentDate = daily[0].date.weekday + ', ' + daily[0].date.monthname + ' ' + daily[0].date.day;
+    currentLocation = current.display_location.city + ', ' + current.display_location.state;
+    currentTemp = {
+      c: current.temp_c,
+      f: current.temp_f
+    };
+    // Store forecast info
+    daily.forEach(function(day) {
+      var obj = {}; // Temporary object
+      obj.weekdayShort = day.date.weekday_short;
+      obj.conditions = day.conditions;
+      obj.icon = day.icon;
+      obj.c = {
+        high: day.high.celsius,
+        low: day.low.celsius
+      };
+      obj.f = {
+        high: day.high.fahrenheit,
+        low: day.low.fahrenheit
+      };
+      forecast.push(obj);
     });
+    // Display weather ONLY after processing
+    displayWeather();
   }
 
-  // ------------------------
-  // Locate and Unit Buttons
-  // ------------------------
-  var $locateBtn = $('#locateBtn');
-  var $unitBtn = $('.unitBtn');
+  // Display data on page
+  function displayWeather() {
+    // Separate today's forecast from the rest
+    var today = forecast.shift();
+    // Today - Print weather data
+    $('#current .location').html(currentLocation);
+    $('#current .date').html(currentDate);
+    $('#current .weatherIcon > div').attr('class', today.icon);
+    $('#current .conditions').html(today.conditions);
+    $('#lastUpdated').html('Last updated at ' + getCurrentTime());
+    // Add forecast data to page, don't display temps yet
+    $forecastDivs.each(function(index) {
+      $(this).find('.day').html(forecast[index].weekdayShort);
+      $(this).find('.weatherIcon').children().attr('class', forecast[index].icon);
+      $(this).find('.conditions').html(forecast[index].conditions);
+    });
+    // Get/update temps with current units
+    updateTemps(currentUnits);
+  }
 
-  // Animate locateBtn on load
-
-  // Click locateBtn to get current location
-  $locateBtn.on('click', function() {
-    getCurrentLocation();
-  });
-
-  // Toggle temperature units
-  // Default to Fahrenheits
-
+  // Add temps to page
+  function updateTemps(units) {
+    $('#current .temp').html(Math.round(currentTemp[units]));
+    $forecastDivs.each(function(index) {
+      $(this).find('.high').html(forecast[index][units].high);
+      $(this).find('.low').html(forecast[index][units].low);
+    });
+  }
 
   // ------------
   // Status Bar
@@ -138,27 +149,7 @@ $(document).ready(function () {
   // Misc Functions
   // ---------------
 
-  // Grab only the needed info from weather request and return
-  function simplifyData(arr) {
-    var newArr = [];
-    arr.forEach(function(day) {
-      var forecast = {}; // Temporary object
-      forecast.date = day.date.weekday + ', ' + day.date.monthname + ' ' + day.date.day;
-      forecast.weekdayShort = day.date.weekday_short;
-      forecast.conditions = day.conditions;
-      forecast.icon = day.icon;
-      forecast.high = {
-        c: day.high.celsius,
-        f: day.high.fahrenheit
-      };
-      forecast.low = {
-        c: day.low.celsius,
-        f: day.low.fahrenheit
-      };
-      newArr.push(forecast);
-    });
-    return newArr;
-  }
+
 
   // Get and format current time
   function getCurrentTime() {
@@ -173,12 +164,31 @@ $(document).ready(function () {
     if (mins < 10) {
       mins = '0' + mins; // Format minutes
     }
-    return hours + ':' + mins + ' ' + period;
+    return hours + ':' + mins + period;
   }
 
-  // -----------------------------------
+  // ------------------------
+  // Locate and Unit Buttons
+  // ------------------------
+
+  // Animate locateBtn on load
+
+  // locateBtn - click to get current location
+  $locateBtn.on('click', function() {
+    getCurrentLocation($(this));
+    $(this).removeClass('on');
+  });
+
+  // unitBtn - click to toggle units
+  $unitBtn.on('click', function() {
+    $(this).toggleClass('on')
+           .attr('data-units', $(this).attr('data-units') === 'f' ? 'c' : 'f');
+    currentUnits = $(this).attr('data-units');
+    $(this).html(currentUnits);
+    updateTemps(currentUnits);
+  });
+
   // Default to Chicago weather on load
-  // -----------------------------------
-  // getCurrentLocation();
+  // getWeather(60647);
 
 });
