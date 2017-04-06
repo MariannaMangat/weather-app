@@ -11,49 +11,64 @@
 </head>
 <body>
   <!-- Status Bar -->
-  <div id="status" class="error">
+  <div id="status">
     <p>Helpful messages go here.</p>
     <button class="close"><i class="fa fa-times" aria-hidden="true"></i></button>
   </div>
-
   <!-- Current Weather -->
   <div id="current" class="wrapper">
-    <button id="locateBtn">
-      <i class="fa fa-location-arrow" aria-hidden="true"></i>
-    </button>
-    <h1 class="location">Aurora, IL</h1>
-    <h2 class="day">Sunday</h2>
-    <p class="conditions">Sunny</p>
-    <p class="tempRange">
-      <span class="hi">75</span> |
-      <span class="lo">61</span>
-    </p>
-    <div id="largeNum">
-      <p><span class="temp">72</span><span class="unit">&deg;F</span></p>
+    <nav>
+      <button id="locateBtn">
+        <i class="fa fa-location-arrow" aria-hidden="true"></i>
+      </button>
+      <button id="unitBtn" data-units="f">f</button>
+    </nav>
+    <h1 class="location">San Francisco, CA</h1>
+    <h2 class="date">Sunday, April 2, 2017</h2>
+    <div class="weatherIcon">
+      <div class="sunny">
+        <div class="inner"></div>
+      </div>
     </div>
+    <p class="temp">72</p>
+    <p class="conditions">Sunny</p>
   </div>
-
   <!-- Future Forecast -->
   <div id="future" class="wrapper">
-<!--    <div class="container">
+    <div class="container">
       <h3 class="day">Mon</h3>
-      <p class="conditions">Partly Cloudy</p>
-      <p class="tempRange"><span class="hi">76</span> / <span class="lo">52</span></p>
+      <div class="weatherIcon">
+        <div class="fog">
+          <div class="inner"></div>
+        </div>
+      </div>
+      <p class="conditions">Fog</p>
+      <p class="tempRange"><span class="high">76</span> | <span class="low">52</span></p>
     </div>
     <div class="container">
       <h3 class="day">Tue</h3>
-      <p class="conditions">Overcast</p>
-      <p class="tempRange"><span class="hi">76</span> / <span class="lo">52</span></p>
+      <div class="weatherIcon">
+        <div class="flurries">
+          <div class="inner"></div>
+        </div>
+      </div>
+      <p class="conditions">Flurries</p>
+      <p class="tempRange"><span class="high">76</span> | <span class="low">52</span></p>
     </div>
     <div class="container">
       <h3 class="day">Wed</h3>
-      <p class="conditions">Rainy</p>
-      <p class="tempRange"><span class="hi">76</span> / <span class="lo">52</span></p>
-    </div> -->
+      <div class="weatherIcon">
+        <div class="snow">
+          <div class="inner"></div>
+        </div>
+      </div>
+      <p class="conditions">Snow</p>
+      <p class="tempRange"><span class="high">76</span> | <span class="low">52</span></p>
+    </div>
   </div>
-
   <footer>
-    <p id="observationTime">Last Updated on January 1, 2017, 12:00 PM CDT</p>
+    <p id="lastUpdated">Last updated at 12:00pm</p>
+    <p>Created by <a href="http://tiffanydu.com/" title="Visit Portfolio Site" target="_blank">Tiffany Du</a> | Weather data from <a href="https://www.wunderground.com/" title="Wunderground.com" target="_blank">Wunderground</a></p>
   </footer>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script type="text/javascript" src="script.js"></script>
