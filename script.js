@@ -26,7 +26,7 @@ $(document).ready(function () {
     function showError(error) {
       switch(error.code) {
         case error.PERMISSION_DENIED:
-          showStatus('error', 'ERROR: Geolocation request denied. Try visiting the HTTPS site: <a href="https://projects.tiffanydu.com/weather" target="_blank">https://projects.tiffanydu.com/weather</a>');
+          showStatus('error', 'ERROR: Geolocation request denied. Try visiting the HTTPS site: <a href="https://codepen.io/tiffanyadu/pen/qryXBo" target="_blank">https://codepen.io/tiffanyadu/pen/qryXBo</a>');
           break;
         case error.POSITION_UNAVAILABLE:
           showStatus('error', 'ERROR: Location information is unavailable.');
@@ -74,6 +74,7 @@ $(document).ready(function () {
       c: current.temp_c,
       f: current.temp_f
     };
+    forecast.length = 0; // Empty array first
     // Store forecast info
     daily.forEach(function(day) {
       var obj = {}; // Temporary object
