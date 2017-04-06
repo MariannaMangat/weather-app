@@ -26,7 +26,7 @@ $(document).ready(function () {
     function showError(error) {
       switch(error.code) {
         case error.PERMISSION_DENIED:
-          showStatus('error', 'ERROR: Geolocation request denied. Try visiting the HTTPS site: <a href="https://codepen.io/tiffanyadu/pen/qryXBo" target="_blank">https://codepen.io/tiffanyadu/pen/qryXBo</a>');
+          showStatus('error', 'ERROR: Geolocation request denied. Try visiting the HTTPS site: <a href="https://projects.tiffanydu.com/weather" target="_blank">https://projects.tiffanydu.com/weather</a>');
           break;
         case error.POSITION_UNAVAILABLE:
           showStatus('error', 'ERROR: Location information is unavailable.');
