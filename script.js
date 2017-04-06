@@ -7,6 +7,7 @@ $(document).ready(function () {
       $forecastDivs = $('#future .container'),
       $locateBtn = $('#locateBtn'),
       $unitBtn = $('#unitBtn');
+
   // -----------------
   // Geolocation API
   // -----------------
@@ -67,7 +68,7 @@ $(document).ready(function () {
     var current = data.current_observation;
     var daily = data.forecast.simpleforecast.forecastday;
     // Store values for current date, location, and temp
-    currentDate = daily[0].date.weekday + ', ' + daily[0].date.monthname + ' ' + daily[0].date.day;
+    currentDate = daily[0].date.weekday + ', ' + daily[0].date.monthname + ' ' + daily[0].date.day + ', ' + daily[0].date.year;
     currentLocation = current.display_location.city + ', ' + current.display_location.state;
     currentTemp = {
       c: current.temp_c,
@@ -113,7 +114,7 @@ $(document).ready(function () {
     updateTemps(currentUnits);
   }
 
-  // Add temps to page
+  // Update temps and add to page
   function updateTemps(units) {
     $('#current .temp').html(Math.round(currentTemp[units]));
     $forecastDivs.each(function(index) {
@@ -149,8 +150,6 @@ $(document).ready(function () {
   // Misc Functions
   // ---------------
 
-
-
   // Get and format current time
   function getCurrentTime() {
     var now = new Date();
@@ -171,12 +170,10 @@ $(document).ready(function () {
   // Locate and Unit Buttons
   // ------------------------
 
-  // Animate locateBtn on load
-
   // locateBtn - click to get current location
   $locateBtn.on('click', function() {
     getCurrentLocation($(this));
-    $(this).removeClass('on');
+    $(this).removeClass('on pulse');
   });
 
   // unitBtn - click to toggle units
@@ -188,7 +185,15 @@ $(document).ready(function () {
     updateTemps(currentUnits);
   });
 
-  // Default to Chicago weather on load
-  // getWeather(60647);
-
+  // ------------------------
+  // Functions to run onload
+  // ------------------------
+  window.onload = function() {
+    getWeather(60647); // Default to get Chicago weather
+    // Suggest to share location with message and button animation
+    setTimeout(function() {
+      showStatus('', 'Click on the <i class="fa fa-location-arrow" aria-hidden="true"></i> button to share your current location.');
+      $locateBtn.addClass('pulse');
+    }, 5000);
+  };
 });

@@ -143,6 +143,13 @@ nav {
   content: '\00b0'; /* Degree symbol */
   padding: 1px;
 }
+/* locateBtn Pulse Animation */
+#locateBtn.pulse {
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  20% { background: rgba(255,255,255,0.25); }
+}
 
 /*----------------
   Current Weather
